@@ -32,7 +32,7 @@ plot2DData(C1,C2);
 %Create single layer perceptron using netCreate function with a heaviside
 %activation function and 2 input nodes employing the adeline method for
 %updating weight vectors
-network = netCreate(2,1,0,@step,@void,1);
+network = netCreate(2,1,0,@tanh,@void,1);
 %Begin learning, while plotting the evolution of the decision boundary
 epoch = 0;
 limit = 100;
@@ -52,23 +52,26 @@ while epoch < limit && ~isequal(previousWeights,currentWeights);
     currentWeights = [network.weightsOne; network.biasHid];
     epoch = epoch + 1;
 end
-
+figure(5)
+plot(error);
 fprintf(['Epochs ran: ' int2str(epoch) '\n']);
 
-    function [] = plot2DData(C1,C2)
-        %hold on;
-        text(C1(:,1),C1(:,2),'C1');
-        text(C2(:,1),C2(:,2),'C2');
-        %hold off;
-    end
+function [] = plot2DData(C1,C2)
+    %hold on;
+    text(C1(:,1),C1(:,2),'C1','HorizontalAlignment','center');
+    text(C2(:,1),C2(:,2),'C2','HorizontalAlignment','center');
+    %hold off;
+end
     
 %% 2a
 %Create inputs
 x = [1:2:200]';
 
+range = 20;
+
 %Generate Outputs from linear function y = 0.4*x + 3 + noise (delta)
 [xi xj] = size(x);
-y = (0.4 .* x) + 3 + (20.*rand([xi xj])-10);
+y = (0.4 .* x) + 3 + (2.*range.*rand([xi xj])-range);
 
 %Build single layer perceptron
 network = netCreate(1,1,0,@void,@void,1);
@@ -78,7 +81,7 @@ epoch = 0;
 limit = 100;
 previousWeights = [];
 currentWeights = [network.weightsOne; network.biasHid];
-fprintf('Begin')
+fprintf('Begin \n')
 figure(2)
 hold on;
 
@@ -90,7 +93,7 @@ while epoch < limit && ~isequal(previousWeights,currentWeights);
     ynew = netBlkFeedFwd(network,x);
     cla;
     plot(x,y,'xr');
-    plot(x,ynew,'Color',[0.1,0.1,epoch/limit]);
+    plot(x,ynew,'Color',[0.1,0.56,epoch/limit]);
     pause(0.1);
     epoch = epoch + 1;
 end

@@ -53,9 +53,17 @@ while epoch < iterations
         if isequal(network.hiddenA,@void) || isequal(network.hiddenA,@step)
             deltaH = error;
         elseif isequal(network.hiddenA,@sigmoid)
-            deltaH = hidA .* (1 - hidA) .* (deltaO * network.weightsTwo');
+            if network.out ~= 0
+                deltaH = hidA .* (1 - hidA) .* (deltaO * network.weightsTwo');
+            else
+                deltaH = hidA .* (1 - hidA) .* error;
+            end
         elseif isequal(network.hiddenA,@tanh)
-            deltaH = sech((datum * network.weightsOne)+network.biasHid) .* (deltaO * network.weightsTwo');
+            if network.out ~= 0
+                deltaH = sech((datum * network.weightsOne)+network.biasHid).^2 .* (deltaO * network.weightsTwo');
+            else
+                deltaH = sech((datum * network.weightsOne)+network.biasHid).^2 .* error;
+            end
         end
         % Update weights into output
         if network.out > 0
